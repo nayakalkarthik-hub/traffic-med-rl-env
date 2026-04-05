@@ -1,6 +1,7 @@
 from env import TrafficMedEnv
+from agent import QAgent
 
-# 🧠 Trained Q-table (from your training output)
+# Q-table from your trained model
 q_table = [
     [125.55, 80.67, 79.36, 76.74],
     [101.53, 134.93, 104.93, 107.01],
@@ -8,32 +9,24 @@ q_table = [
     [95.29, 93.65, 89.52, 126.71]
 ]
 
-def run_inference():
-    print("[START]")
+env = TrafficMedEnv()
+agent = QAgent(q_table)
 
-    env = TrafficMedEnv()
-    state = env.reset()
+state = env.reset()
+done = False
+total_reward = 0
 
-    done = False
-    total_reward = 0
+print("[START]")
 
-    while not done:
-        # 🚑 Get ambulance lane (our state)
-        state_lane = state["ambulance_lane"]
+step = 0
+while not done:
+    action = agent.choose_action(state)
+    next_state, reward, done = env.step(action)
 
-        # 🧠 Choose best action from Q-table
-        action = q_table[state_lane].index(max(q_table[state_lane]))
+    print(f"[STEP] action={action}, reward={reward}, state={state}")
 
-        next_state, reward, done = env.step(action)
+    total_reward += reward
+    state = next_state
+    step += 1
 
-        total_reward += reward
-
-        print(f"[STEP] action={action}, reward={reward}, state={state}")
-
-        state = next_state
-
-    print(f"[END] Total Reward: {total_reward}")
-
-
-if __name__ == "__main__":
-    run_inference()
+print(f"[END] Total Reward: {total_reward}")

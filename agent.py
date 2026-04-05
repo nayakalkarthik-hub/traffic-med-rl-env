@@ -1,22 +1,21 @@
-import random
+# ------------------------------
+# agent.py
+# ------------------------------
 
-class SimpleAgent:
+class QAgent:
+    def __init__(self, q_table):
+        """
+        Q-table agent that chooses actions based on the trained Q-table.
+        q_table: list of lists, q_table[state][action] = value
+        """
+        self.q_table = q_table
+
     def choose_action(self, state):
-        ambulance_lane = state["ambulance_lane"]
-        severity = state["severity"]
-        traffic = state["traffic"]
-
-        # 🚑 If ambulance exists, go there
-        if ambulance_lane != -1:
-            # For severity 3 → always pick ambulance lane
-            if severity == 3:
-                return ambulance_lane
-            # For severity 1-2 → pick ambulance lane only if traffic not too high
-            elif traffic[ambulance_lane] < max(traffic):
-                return ambulance_lane
-
-        # Otherwise pick lane with highest traffic reduction potential
-        max_vehicles = max(traffic)
-        best_lanes = [i for i, v in enumerate(traffic) if v == max_vehicles]
-
-        return random.choice(best_lanes)
+        """
+        Chooses the best action for the current state.
+        state: dict with 'ambulance_lane' key
+        """
+        state_lane = state["ambulance_lane"]
+        # Pick the action with the highest Q-value for this state
+        action = self.q_table[state_lane].index(max(self.q_table[state_lane]))
+        return action
