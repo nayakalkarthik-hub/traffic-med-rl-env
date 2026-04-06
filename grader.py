@@ -18,4 +18,10 @@ def run_task(env_class, episodes=10):
         total_reward += episode_reward
 
     average_reward = total_reward / episodes
-    print(f"{env_class.__name__} Average Reward:
+    print(f"{env_class.__name__} Average Reward: {average_reward}")
+    assert 0.0 <= average_reward <= 1.0, f"{env_class.__name__} reward out of range!"
+
+if __name__ == "__main__":
+    run_task(EasyTrafficEnv)
+    run_task(MediumTrafficEnv)
+    run_task(HardTrafficEnv)
